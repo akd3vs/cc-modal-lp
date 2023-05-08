@@ -15,9 +15,9 @@ export default defineComponent({
       alt=""
       class="nav-main-logo"
     />
-    <p class="nav-main-tenant">Modal - Store Demo</p>
+    <p class="nav-main-tenant">Modal</p>
     <ul class="menu-h ml-auto">
-      <li><a href="/">Homepage</a></li>
+      <li><a href="/">Home</a></li>
       <li class="has-submenu">
         <span>Store</span>
         <ul class="menu-v submenu">
