@@ -1,0 +1,51 @@
+<template>
+  <MoleculeDataTable :columns="columns" :data="products" />
+</template>
+
+<script lang="ts">
+import { computed, defineComponent } from 'vue'
+
+import MoleculeDataTable from '@/components/molecules/MoleculeDataTable.vue'
+
+import type ProductTypeInterface from '@/interfaces/ProductTypeInterface'
+
+import { useProductStore } from '@/stores/products'
+
+const columns = [
+  {
+    key: 'sku',
+    label: 'SKU'
+  },
+  {
+    key: 'name',
+    label: 'Name'
+  },
+  {
+    key: 'price',
+    label: 'Price'
+  },
+  {
+    key: 'type',
+    label: 'Category',
+    render: (row: string | number | ProductTypeInterface) => {
+      if (typeof row === 'object' && 'label' in row) {
+        return row.label
+      }
+
+      return row
+    }
+  }
+]
+
+export default defineComponent({
+  name: 'OrganismProductTable',
+  components: { MoleculeDataTable },
+  setup() {
+    const productsStore = useProductStore()
+
+    const products = computed(() => productsStore.products)
+
+    return { products, columns }
+  }
+})
+</script>
