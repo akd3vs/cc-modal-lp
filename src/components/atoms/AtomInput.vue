@@ -195,20 +195,28 @@ export default defineComponent({
     function onBlur(e: Event) {
       const value = (e.target as HTMLInputElement).value
       if (value.trim() !== '') {
-        let pureNumber: string | number = value.replace(/,/g, '')
+        let formattedValue = value
 
-        if (props.max && parseFloat(pureNumber) > parseFloat(props.max as string)) {
-          pureNumber = props.max as string
+        if (props.type === 'number' || props.currency) {
+          formattedValue = value.replace(/,/g, '')
         }
 
-        // onBlur, we need to format with decimals if we're dealing with currency
-        const numberFormat = new Intl.NumberFormat('default', {
-          style: 'decimal',
-          currency: props.currency ?? undefined,
-          maximumFractionDigits: parseInt((props.fractionDigits as string) || '0'),
-          minimumFractionDigits: parseInt((props.fractionDigits as string) || '0')
-        })
-        emit('update:modelValue', numberFormat.format(parseFloat(pureNumber)))
+        if (props.max && parseFloat(formattedValue) > parseFloat(props.max as string)) {
+          formattedValue = props.max as string
+        }
+
+        if (props.type === 'number' || props.currency) {
+          // onBlur, we need to format with decimals if we're dealing with currency
+          const numberFormat = new Intl.NumberFormat('default', {
+            style: 'decimal',
+            currency: props.currency ?? undefined,
+            maximumFractionDigits: parseInt((props.fractionDigits as string) || '0'),
+            minimumFractionDigits: parseInt((props.fractionDigits as string) || '0')
+          })
+          formattedValue = numberFormat.format(parseFloat(formattedValue))
+        }
+
+        emit('update:modelValue', formattedValue)
       }
     }
 
