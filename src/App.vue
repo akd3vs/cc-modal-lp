@@ -1,10 +1,10 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { RouterView } from 'vue-router'
+import { RouterView, RouterLink } from 'vue-router'
 
 export default defineComponent({
   name: 'App',
-  components: { RouterView }
+  components: { RouterView, RouterLink }
 })
 </script>
 
@@ -17,11 +17,11 @@ export default defineComponent({
     />
     <p class="nav-main-tenant">Modal</p>
     <ul class="menu-h ml-auto">
-      <li><a href="/">Home</a></li>
+      <li><RouterLink to="/">Home</RouterLink></li>
       <li class="has-submenu">
         <span>Store</span>
         <ul class="menu-v submenu">
-          <li><a href="/store/products">Products</a></li>
+          <li><RouterLink to="/store/products">Products</RouterLink></li>
         </ul>
       </li>
     </ul>

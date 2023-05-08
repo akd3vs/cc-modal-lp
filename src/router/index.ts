@@ -9,19 +9,31 @@ const router = createRouter({
       redirect: { name: 'StoreProductsPath' }
     },
     {
-      path: '/store/products',
-      name: 'StoreProductsPath',
-      component: ProductsView,
+      path: '/store',
+      name: 'StorePath',
+      redirect: { name: 'StoreProductsPath' },
       children: [
         {
-          path: '/store/products/add-product',
-          name: 'StoreProductsAddProductPath',
-          component: () => import('../views/store/products/AddProductModalView.vue')
+          path: '/store/config',
+          name: 'StoreConfig',
+          component: () => import('../views/store/ConfigView.vue')
         },
         {
-          path: '/store/products/demo',
-          name: 'demo',
-          component: () => import('../views/store/products/InputsDemoModalView.vue')
+          path: '/store/products',
+          name: 'StoreProductsPath',
+          component: ProductsView,
+          children: [
+            {
+              path: '/store/products/add-product',
+              name: 'StoreProductsAddProductPath',
+              component: () => import('../views/store/products/AddProductModalView.vue')
+            },
+            {
+              path: '/store/products/demo',
+              name: 'demo',
+              component: () => import('../views/store/products/InputsDemoModalView.vue')
+            }
+          ]
         }
       ]
     }

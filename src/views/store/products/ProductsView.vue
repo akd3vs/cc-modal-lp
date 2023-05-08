@@ -18,9 +18,14 @@ export default defineComponent({
       push({ name: 'demo' })
     }
 
+    function goToSettings() {
+      push({ name: 'StoreConfig' })
+    }
+
     return {
       goToModal,
-      goToDemoModal
+      goToDemoModal,
+      goToSettings
     }
   }
 })
@@ -32,9 +37,12 @@ export default defineComponent({
       <AtomButton @click="goToModal" type="button" class-name="btn btn-primary"
         >Add product</AtomButton
       >
-      <AtomButton @click="goToDemoModal" type="button" class-name="btn btn-secondary"
-        >Show inputs demo</AtomButton
-      >
+      <div class="ly-row">
+        <AtomButton @click="goToDemoModal" type="button" class-name="btn btn-secondary"
+          >Show inputs demo</AtomButton
+        >
+        <AtomButton type="button" @click="goToSettings" class-name="btn">Configurations</AtomButton>
+      </div>
     </div>
 
     <div class="ly-row">

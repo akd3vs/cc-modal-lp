@@ -34,6 +34,13 @@ export const useProductStore = defineStore({
   actions: {
     addProduct(product: ProductInterface) {
       this.products.push(product)
+    },
+    setConfig(
+      section: keyof RootState['storeConfig'],
+      key: keyof RootState['storeConfig'][typeof section],
+      value: any
+    ) {
+      this.storeConfig[section][key] = value
     }
   }
 })
