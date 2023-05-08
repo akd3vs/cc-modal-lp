@@ -15,4 +15,17 @@ describe('Store tests', () => {
     }
     cy.openModal().fillForm(product2).verifyTableWithOptions(product2)
   })
+
+  it('reflects config correctly', () => {
+    const newMaxPrice = 9999
+    cy.visit('/')
+      .goToSettings()
+      .inSettingsChangeMaxPrice(9999)
+      .go('back')
+      .openModal()
+      .fillForm()
+      .verifyTableWithOptions({
+        price: newMaxPrice
+      })
+  })
 })

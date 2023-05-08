@@ -87,7 +87,13 @@ Cypress.Commands.add('goToSettings', () => {
   cy.get('.btn').contains('Configurations').click()
 })
 
-Cypress.Commands.add('inSettingsChangeMaxPrice', () => {})
+Cypress.Commands.add('inSettingsChangeMaxPrice', (newPrice) => {
+  cy.get('input[name="maxPrice"]').clear().type(String(newPrice))
+})
+
+Cypress.Commands.add('goToStore', () => {
+  cy.go('back')
+})
 
 interface FillFormOptions {
   name?: string
@@ -104,6 +110,7 @@ declare global {
       verifyTableWithOptions(options?: FillFormOptions): Chainable<void>
       goToSettings(): Chainable<void>
       inSettingsChangeMaxPrice(price: number): Chainable<void>
+      goToStore(): Chainable<void>
     }
   }
 }
