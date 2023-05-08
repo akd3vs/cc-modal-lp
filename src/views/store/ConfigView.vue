@@ -16,13 +16,10 @@ export default defineComponent({
     const productsMaxPrice = ref(configs.value.products.maxPrice)
 
     watchEffect(() => {
-      const newValue = parseInt(productsMaxPrice.value)
+      const newValue = parseInt(String(productsMaxPrice.value))
       if (productsMaxPrice.value && newValue > 0) {
-        console.log('setting max price to', newValue)
-        // productsStore.setConfig('products', 'maxPrice', parseInt(productsMaxPrice.value))
         productsStore.$patch((state) => {
           state.storeConfig.products.maxPrice = newValue
-          state.hasChanged = true
         })
       }
     })

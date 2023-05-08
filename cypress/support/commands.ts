@@ -83,6 +83,12 @@ Cypress.Commands.add('verifyTableWithOptions', (options: FillFormOptions = defau
   }
 })
 
+Cypress.Commands.add('goToSettings', () => {
+  cy.get('.btn').contains('Configurations').click()
+})
+
+Cypress.Commands.add('inSettingsChangeMaxPrice', () => {})
+
 interface FillFormOptions {
   name?: string
   price?: number
@@ -96,6 +102,8 @@ declare global {
       openModal(): Chainable<void>
       fillForm(options?: FillFormOptions | undefined): Chainable<void>
       verifyTableWithOptions(options?: FillFormOptions): Chainable<void>
+      goToSettings(): Chainable<void>
+      inSettingsChangeMaxPrice(price: number): Chainable<void>
     }
   }
 }
