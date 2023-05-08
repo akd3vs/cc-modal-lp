@@ -153,6 +153,7 @@ export default defineComponent({
       @click="toggleDropdown"
       @keyup.enter="toggleDropdown"
       @keyup.space="toggleDropdown"
+      @focus="toggleDropdown"
       tabindex="0"
       data-testid="input-label"
     >
