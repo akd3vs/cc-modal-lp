@@ -37,6 +37,7 @@ export default defineComponent({
       <div>
         <AtomInput
           name="name"
+          type="number"
           class-names="form-field"
           label="Number decimal"
           max="3.141592"

@@ -174,7 +174,11 @@ export default defineComponent({
             currency: props.currency,
             maximumFractionDigits: 0
           })
-          formattedValue = numberFormat.format(parseFloat(formattedValue))
+          let numberParsed = parseFloat(formattedValue)
+          if (Number.isNaN(numberParsed)) {
+            numberParsed = 0
+          }
+          formattedValue = numberFormat.format(numberParsed)
         }
       }
 
