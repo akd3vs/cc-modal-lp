@@ -1,6 +1,6 @@
 # cc-modal-lp
 
-This template should help get you started developing with Vue 3 in Vite.
+Live URL: [https://cc-modal-lp.vercel.app/](https://cc-modal-lp.vercel.app/)
 
 ## Recommended IDE Setup
 
