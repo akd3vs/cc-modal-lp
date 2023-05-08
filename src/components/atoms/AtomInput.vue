@@ -205,7 +205,7 @@ export default defineComponent({
           formattedValue = props.max as string
         }
 
-        if (props.type === 'number' || props.currency) {
+        if (props.currency) {
           // onBlur, we need to format with decimals if we're dealing with currency
           const numberFormat = new Intl.NumberFormat('default', {
             style: 'decimal',
