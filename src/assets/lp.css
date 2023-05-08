@@ -3006,6 +3006,19 @@
     width: calc(100vw - 4rem)
 }
 
+@media screen and (max-width: 580px) {
+    .lp .overlay {
+        padding: 0;
+    }
+    .lp .modal {
+        width: 100%;
+        max-width: 100%
+    }
+    .lp .ly-even-2 {
+        grid-template-columns: 1fr;
+    }
+}
+
 .lp .modal-full .lp-modal-content {
     max-height: unset
 }
