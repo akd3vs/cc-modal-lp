@@ -36,7 +36,7 @@ export default defineComponent({
 <template>
   <div class="overlay" :class="{ 'd-flex': show }">
     <!-- modal -->
-    <div id="{{id}}" :class="{ [`modal modal-${size}`]: true, 'd-block': show }">
+    <div :id="id" :class="{ [`modal modal-${size}`]: true, 'd-block': show }">
       <div class="ly-row ly-spacebetween-center mb-1">
         <h3 class="m-0">{{ title }}</h3>
         <button
