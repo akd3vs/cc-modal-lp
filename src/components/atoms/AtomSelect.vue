@@ -210,6 +210,7 @@ export default defineComponent({
       @focus="toggleDropdown"
       tabindex="0"
       data-testid="input-label"
+      :data-input-name="name"
     >
       {{ label }}
       <input :name="name" type="hidden" :required="required" />
@@ -334,7 +335,7 @@ export default defineComponent({
 }
 
 .dropdown-options {
-  max-height: 300px;
+  max-height: 250px;
   overflow: auto;
 }
 

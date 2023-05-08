@@ -36,4 +36,68 @@
 //   }
 // }
 
+Cypress.Commands.add('openModal', () => {
+  cy.get('.btn.btn-primary').click()
+})
+
+const defaultOptions = {
+  name: 'test',
+  price: 15000.05,
+  sku: 'test-1',
+  type: ['Vegetables', 'Meat']
+}
+
+Cypress.Commands.add('fillForm', (options: FillFormOptions = defaultOptions) => {
+  const { name, price, sku, type } = options
+
+  if (name && price && sku && type) {
+    cy.get('input[name="name"]').type(name)
+    cy.get('input[name="price"]').type(String(price))
+    cy.get('input[name="sku"]').type(sku)
+    cy.get('label[data-input-name="type"] + .dropdown-container .dropdown-field').click()
+
+    type.forEach((option) => {
+      cy.get('.dropdown-option:not(.is-group) a').contains(option).click()
+    })
+
+    cy.get('button[type="submit"').click()
+  }
+})
+
+Cypress.Commands.add('verifyTableWithOptions', (options: FillFormOptions = defaultOptions) => {
+  const { name, price, sku, type } = options
+
+  if (name && price && sku && type) {
+    const tr = cy.get('tr[data-testid="datatable-tr"]')
+
+    tr.get('td').contains(name)
+    tr.get('td').contains(
+      new Intl.NumberFormat('default', {
+        style: 'decimal',
+        maximumFractionDigits: 2,
+        minimumFractionDigits: 2
+      }).format(price)
+    )
+    tr.get('td').contains(sku)
+    tr.get('td').contains(type.join(', '))
+  }
+})
+
+interface FillFormOptions {
+  name?: string
+  price?: number
+  sku?: string
+  type?: Array<string>
+}
+
+declare global {
+  namespace Cypress {
+    interface Chainable {
+      openModal(): Chainable<void>
+      fillForm(options?: FillFormOptions | undefined): Chainable<void>
+      verifyTableWithOptions(options?: FillFormOptions): Chainable<void>
+    }
+  }
+}
+
 export {}
