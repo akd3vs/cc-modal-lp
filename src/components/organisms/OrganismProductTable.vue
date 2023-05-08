@@ -28,11 +28,11 @@ const columns = [
     key: 'type',
     label: 'Category',
     render: (row: string | number | ProductTypeInterface) => {
-      if (typeof row === 'object' && 'label' in row) {
-        return row.label
+      if (typeof row === 'object' && Array.isArray(row)) {
+        return row.map((r) => r.label).join(', ')
       }
 
-      return row
+      return String(row)
     }
   }
 ]

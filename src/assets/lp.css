@@ -9,8 +9,10 @@
 }
 
 :root {
+    --color-dark: #27313F;
     --color-blue: #1A62FF;
     --color-blue-hover: #0043D2;
+    --color-orange: #FF9100;
 }
 
 .lp {

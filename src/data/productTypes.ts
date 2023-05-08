@@ -1,7 +1,13 @@
 export default [
   {
     label: 'Fresh produce',
-    value: 'fresh-produce'
+    value: 'fresh-produce',
+    children: [
+      {
+        label: 'Vegetables',
+        value: 'vegetables'
+      }
+    ]
   },
   {
     label: 'Dairy',

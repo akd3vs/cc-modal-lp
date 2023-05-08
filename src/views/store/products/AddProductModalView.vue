@@ -24,7 +24,7 @@ export default defineComponent({
     const formInputName = ref('')
     const formInputSku = ref('')
     const formInputPrice = ref()
-    const formInputType = ref<ProductTypeInterface>()
+    const formInputType = ref<ProductTypeInterface[]>([])
 
     const isValidFormInputName = ref(false)
     const isValidFormInputSku = ref(false)
@@ -40,7 +40,7 @@ export default defineComponent({
     }
 
     function submit() {
-      if (formInputType.value && 'value' in formInputType.value && 'label' in formInputType.value) {
+      if (isFormValid.value) {
         const newProduct: ProductInterface = {
           name: formInputName.value,
           sku: formInputSku.value,
@@ -152,6 +152,7 @@ export default defineComponent({
           error-message="You must specify a product type"
           empty-label="Select one"
           required
+          multiple
         />
       </div>
       <div></div>
