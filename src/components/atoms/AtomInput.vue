@@ -224,7 +224,13 @@ export default defineComponent({
           formattedValue = numberFormat.format(numberParsed)
         }
 
+        // if we have min value (number), we compare it with the value and if it's less than, show an error
+        if (props.min && parseFloat(formattedValue) < parseFloat(props.min as string)) {
+          inputError.value = true
+        }
+
         emit('update:modelValue', formattedValue)
+        emit('update:isValid', !inputError.value)
       }
     }
 
