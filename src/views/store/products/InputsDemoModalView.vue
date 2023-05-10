@@ -6,7 +6,10 @@ import OrganismModal from '@/components/organisms/OrganismModal.vue'
 import AtomInput from '@/components/atoms/AtomInput.vue'
 import AtomSelect from '@/components/atoms/AtomSelect.vue'
 import AtomButton from '@/components/atoms/AtomButton.vue'
+
 import { useProductStore } from '@/stores/products'
+
+import productTypesPlain from '@/data/productTypesPlain'
 
 export default defineComponent({
   name: 'ModalView',
@@ -25,7 +28,8 @@ export default defineComponent({
 
     return {
       onModalClose,
-      productTypes
+      productTypes,
+      productTypesPlain
     }
   }
 })
@@ -92,6 +96,30 @@ export default defineComponent({
           error-message="You must specify a product type"
           empty-label="Select one"
           required
+          multiple
+        />
+      </div>
+      <div>
+        <AtomSelect
+          name="type"
+          class-names="form-field"
+          label="Type w/o children"
+          :options="productTypesPlain"
+          error-message="You must specify a product type"
+          empty-label="Select one"
+          required
+        />
+      </div>
+      <div>
+        <AtomSelect
+          name="type"
+          class-names="form-field"
+          label="Type w/o search"
+          :options="productTypesPlain"
+          error-message="You must specify a product type"
+          empty-label="Select one"
+          required
+          :with-search="false"
         />
       </div>
       <div></div>

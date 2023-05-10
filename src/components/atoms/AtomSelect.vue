@@ -5,6 +5,7 @@ export interface AtomSelectOption {
   value: string | number
   label: string
   children?: AtomSelectOption[]
+  filteredChildren?: AtomSelectOption[]
 }
 
 export interface AtomSelectProps {
@@ -59,23 +60,31 @@ export default defineComponent({
   setup(props, { emit }) {
     const isOpen = ref(false)
     const selectedOptions = ref<AtomSelectOption[]>([])
-    const searchTerm = ref('')
+    const searchTerm = ref<String>('')
     const focusedIndex = ref(-1)
     const searchInputRef = ref<HTMLInputElement>()
+    const dropdownContainerRef = ref<HTMLDivElement>()
+    const instanceId = ref(crypto.randomUUID())
+    const optionsRef = ref(props.options)
 
     const filteredOptions = computed<AtomSelectOption[]>(() => {
-      return props.options.filter((option) => {
+      return optionsRef.value.filter((option) => {
         const groupMatch = option.label.toLowerCase().includes(searchTerm.value.toLowerCase())
         let anyChildMatch = false
+        const hasChildren = option.children && option.children.length > 0
 
-        if (option.children && option.children.length > 0 && 'filter' in option.children) {
-          option.children = option.children.filter((childOption) =>
+        if (hasChildren && Array.isArray(option.children)) {
+          option.filteredChildren = option.children.filter((childOption) =>
             childOption.label.toLowerCase().includes(searchTerm.value.toLowerCase())
           )
 
-          if (option.children.length > 0) {
+          if (option.filteredChildren.length > 0) {
             anyChildMatch = true
           }
+        }
+
+        if (groupMatch && hasChildren && !anyChildMatch) {
+          return false
         }
 
         return groupMatch || anyChildMatch
@@ -100,6 +109,14 @@ export default defineComponent({
 
     const toggleDropdown = () => {
       isOpen.value = !isOpen.value
+
+      if (isOpen.value) {
+        nextTick(() => {
+          if (searchInputRef.value && 'focus' in searchInputRef.value) {
+            searchInputRef.value.focus()
+          }
+        })
+      }
     }
 
     const closeDropdown = () => {
@@ -160,7 +177,10 @@ export default defineComponent({
     }
 
     const handleOutsideClick = (event: Event) => {
-      if (!(event.target as HTMLElement).closest('.dropdown-container')) {
+      const closest = (event.target as HTMLElement).closest('.dropdown-container')
+      const parentId =
+        closest && closest.parentNode && (closest.parentNode as HTMLElement).getAttribute('id')
+      if (!closest || (closest && parentId !== instanceId.value)) {
         closeDropdown()
       }
     }
@@ -168,11 +188,6 @@ export default defineComponent({
     watchEffect(() => {
       if (isOpen.value) {
         document.addEventListener('click', handleOutsideClick)
-        nextTick(() => {
-          if (searchInputRef.value && 'focus' in searchInputRef.value) {
-            searchInputRef.value.focus()
-          }
-        })
       } else {
         document.removeEventListener('click', handleOutsideClick)
       }
@@ -195,14 +210,16 @@ export default defineComponent({
       focusPreviousOption,
       toggleSelect,
       openDropdown,
-      searchInputRef
+      searchInputRef,
+      dropdownContainerRef,
+      instanceId
     }
   }
 })
 </script>
 
 <template>
-  <div class="dropdown" data-testid="atom-select-container">
+  <div class="select" :id="instanceId" data-testid="atom-select-container">
     <label
       @click="toggleDropdown"
       @keyup.enter="toggleDropdown"
@@ -216,7 +233,7 @@ export default defineComponent({
       <input :name="name" type="hidden" :required="required" />
     </label>
 
-    <div :class="{ 'dropdown-container p-relative': true, open: isOpen }">
+    <div class="dropdown-container p-relative" :class="{ open: isOpen }" ref="dropdownContainerRef">
       <div
         class="dropdown-field text-gunmetal-60 ly-row ly-spacebetween-center non-interactive"
         data-testid="atom-select"
@@ -235,16 +252,9 @@ export default defineComponent({
         <i :class="{ 'lpi-caret-up': isOpen, 'lpi-caret-down': !isOpen }"></i>
       </div>
 
-      <ul
-        id="dropdown-options"
-        role="listbox"
-        data-testid="atom-select-options-list"
-        class="dropdown-options menu-pop-up"
-        :class="{ visible: isOpen, 'has-search': withSearch }"
-        :aria-label="label"
-        :aria-hidden="!isOpen"
-      >
-        <li v-if="withSearch" class="dropdown-search">
+      <div class="dropdown" :class="{ visible: isOpen, 'has-search': withSearch }">
+        <div v-if="withSearch" class="dropdown-search">
+          <i class="lpi-search"></i>
           <input
             :id="id || name"
             class="dropdown-input mb-half"
@@ -264,52 +274,112 @@ export default defineComponent({
             ref="searchInputRef"
             data-testid="atom-select-search-input"
           />
-        </li>
-        <li
-          v-for="(option, index) in filteredOptions"
-          :key="option.value"
-          class="dropdown-option"
-          :class="{
-            selected: selectedOptions.length > 0 && selectedOptions.includes(option),
-            ['is-group']: option.children && option.children.length > 0
-          }"
-          :id="getOptionId(index)"
-          role="option"
-          @click="option.children && option.children.length > 0 ? false : selectOption(option)"
-          @mouseenter="focusOption(index)"
-          @keydown.enter="
-            option.children && option.children.length > 0 ? false : selectOption(option)
-          "
-          :tabindex="option.children && option.children.length > 0 ? -1 : 0"
-          data-testid="atom-select-option"
+        </div>
+        <ul
+          id="dropdown-options"
+          role="listbox"
+          data-testid="atom-select-options-list"
+          class="dropdown-options menu-pop-up"
+          :aria-label="label"
+          :aria-hidden="!isOpen"
         >
-          <a href="#" tabindex="-1">{{ option.label }}</a>
-          <span v-if="option.children && option.children?.length > 0">
-            <span
-              v-for="(optionChild, indexChild) in option.children"
-              :key="optionChild.value"
-              class="dropdown-option ml-2"
-              :class="{
-                selected: selectedOptions && selectedOptions.includes(optionChild)
-              }"
-              :id="getOptionId(indexChild)"
-              role="option"
-              @click="selectOption(optionChild)"
-              @mouseenter="focusOption(indexChild)"
-              @keydown.enter="selectOption(optionChild)"
-              tabindex="0"
-              data-testid="atom-select-option"
-            >
-              <a href="#" tabindex="-1">{{ optionChild.label }}</a>
+          <li
+            v-if="
+              options &&
+              Array.isArray(options) &&
+              options.length > 0 &&
+              filteredOptions &&
+              Array.isArray(filteredOptions) &&
+              filteredOptions.length < 1
+            "
+            class="dropdown-option no-results"
+          >
+            <a href="#">No results</a>
+          </li>
+          <li
+            v-for="(option, index) in filteredOptions"
+            :key="option.value"
+            class="dropdown-option"
+            :class="{
+              selected: selectedOptions.length > 0 && selectedOptions.includes(option),
+              ['is-group']: option.filteredChildren && option.filteredChildren.length > 0
+            }"
+            :id="getOptionId(index)"
+            role="option"
+            @click="
+              option.filteredChildren && option.filteredChildren.length > 0
+                ? false
+                : selectOption(option)
+            "
+            @mouseenter="focusOption(index)"
+            @keydown.enter="
+              option.filteredChildren && option.filteredChildren.length > 0
+                ? false
+                : selectOption(option)
+            "
+            :tabindex="option.filteredChildren && option.filteredChildren.length > 0 ? -1 : 0"
+            data-testid="atom-select-option"
+          >
+            <a href="#" tabindex="-1">{{ option.label }}</a>
+            <span v-if="option.filteredChildren && option.filteredChildren?.length > 0">
+              <span
+                v-for="(optionChild, indexChild) in option.filteredChildren"
+                :key="optionChild.value"
+                class="dropdown-option"
+                :class="{
+                  selected: selectedOptions && selectedOptions.includes(optionChild)
+                }"
+                :id="getOptionId(indexChild)"
+                role="option"
+                @click="selectOption(optionChild)"
+                @mouseenter="focusOption(indexChild)"
+                @keydown.enter="selectOption(optionChild)"
+                tabindex="0"
+                data-testid="atom-select-option"
+              >
+                <a href="#" tabindex="-1">{{ optionChild.label }}</a>
+              </span>
             </span>
-          </span>
-        </li>
-      </ul>
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 </template>
 
 <style scoped>
+.dropdown {
+  position: absolute;
+  opacity: 0;
+  top: 35px;
+  left: 0;
+  padding: 0;
+  z-index: -1;
+  width: 18rem;
+  background: #fff;
+  box-shadow: 0 4px 10px rgba(41, 49, 62, 0.22);
+  border-radius: 4px;
+  transition: opacity 0.2s ease-in-out;
+}
+.dropdown.visible {
+  display: block;
+  opacity: 1;
+  z-index: 10;
+}
+
+.dropdown .dropdown-search {
+  padding: 1rem;
+  border-bottom: 1px solid var(--color-gray-light);
+}
+.dropdown .dropdown-search input {
+  padding-left: 2rem;
+}
+.dropdown .dropdown-search i {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+}
+
 .dropdown-field {
   box-sizing: border-box;
   border-radius: 4px;
@@ -317,9 +387,13 @@ export default defineComponent({
   background: #dfe4ec;
   padding-right: 0.5rem;
   padding-left: 0.5rem;
-  border: none;
   width: 100%;
   line-height: 33px;
+
+  transition: outline 0.1s ease-in-out;
+}
+.dropdown-container.open .dropdown-field {
+  outline: 2px solid var(--color-blue-hover);
 }
 
 .dropdown-field p {
@@ -330,61 +404,92 @@ export default defineComponent({
   max-width: 30vw;
 }
 
-.dropdown-container:is(.open) .dropdown-options {
-  top: 35px;
+.dropdown-container.open .dropdown-options {
+  display: block;
 }
 
 .dropdown-options {
   max-height: 250px;
+  max-width: 25rem;
+  width: 18rem;
   overflow: auto;
+  padding: 0;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-dark);
+  list-style: none;
+  position: relative;
+  flex-direction: column;
+  scroll-behavior: auto;
+}
+.dropdown-options::-webkit-scrollbar {
+  width: 5px;
+}
+.dropdown-options::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+}
+.dropdown-options::-webkit-scrollbar-thumb {
+  background-color: var(--color-dark);
+  border-radius: 10px;
 }
 
-.dropdown-options.has-search {
+/*.dropdown-options.has-search {
   padding-top: 0;
-}
+}*/
 
-.dropdown-options.has-search li.dropdown-search {
-  position: sticky;
-  top: 0;
-  z-index: 1;
-  padding-top: 1rem;
-  background-color: #fff;
+/**
+ * All elements
+ */
+.dropdown-options .dropdown-option {
+  position: relative;
+  padding: 0.1rem 0;
+  font-weight: 500;
 }
-
-.dropdown-options.has-search li.dropdown-search input {
-  width: 95%;
+.dropdown-options .dropdown-option:not(.is-group) {
+  border-left: 3px solid transparent;
 }
-
-.dropdown-options li.is-group > a {
+.dropdown-options .dropdown-option a {
+  display: flex;
+  padding: 0.5rem 1rem;
   color: var(--color-dark);
-  cursor: default;
 }
-.dropdown-options li.is-group > span {
+.dropdown-options .dropdown-option > span {
+  display: flex;
+}
+
+/**
+ * Groups header
+ */
+.dropdown-options .dropdown-option.is-group {
+  font-weight: 600;
+}
+.dropdown-options .dropdown-option.is-group > a,
+.dropdown-options .dropdown-option.is-group > a:hover {
+  color: var(--color-dark-muted);
+  cursor: default;
+  text-transform: uppercase;
+}
+.dropdown-options .dropdown-option.is-group > span {
   color: var(--color-dark);
   cursor: default;
   padding: 0;
 }
-.dropdown-options li.is-group .dropdown-option {
-  padding: 0.5rem 1rem;
+.dropdown-options .dropdown-option.is-group .dropdown-option {
+  padding: 0 1rem;
   flex: 1;
 }
-.dropdown-options li.is-group > a:hover {
-  color: inherit;
-}
 
-.dropdown-options li:hover:not(:first-child):not(.is-group) {
-  background-color: var(--color-blue-hover);
+/**
+ * li elements and children
+ */
+.dropdown .dropdown-options .dropdown-option:hover:not(.is-group),
+.dropdown .dropdown-option.selected,
+.dropdown .dropdown-options .dropdown-option.is-group .dropdown-option:hover {
+  background-color: var(--color-blue-muted);
+  border-color: var(--color-blue-hover);
 }
-
-.dropdown-option {
-  padding: 0.1rem 0;
-}
-
-.dropdown-option.selected {
-  background-color: var(--color-blue-hover);
-}
+.dropdown-options .dropdown-option:hover:not(.is-group) a,
 .dropdown-option.selected a {
-  color: var(--color-orange);
+  color: var(--color-dark);
 }
 
 @media screen and (max-width: 580px) {

@@ -167,20 +167,20 @@ export default defineComponent({
       }
 
       // after all the validations, if we're dealing with currency, let's format it, but if the user is entering their decimals, we shall not interrupt it
-      if (props.currency && props.currencySymbol && formattedValue) {
-        if (!`${formattedValue}`.includes('.')) {
-          const numberFormat = new Intl.NumberFormat('default', {
-            style: 'decimal',
-            currency: props.currency,
-            maximumFractionDigits: 0
-          })
-          let numberParsed = parseFloat(formattedValue)
-          if (Number.isNaN(numberParsed)) {
-            numberParsed = 0
-          }
-          formattedValue = numberFormat.format(numberParsed)
-        }
-      }
+      // if (props.currency && props.currencySymbol && formattedValue) {
+      //   if (!`${formattedValue}`.includes('.')) {
+      //     const numberFormat = new Intl.NumberFormat('default', {
+      //       style: 'decimal',
+      //       currency: props.currency,
+      //       maximumFractionDigits: 0
+      //     })
+      //     let numberParsed = parseFloat(formattedValue)
+      //     if (Number.isNaN(numberParsed)) {
+      //       numberParsed = 0
+      //     }
+      //     formattedValue = numberFormat.format(numberParsed)
+      //   }
+      // }
 
       emit('update:modelValue', formattedValue)
       if (inputRef.value && 'value' in inputRef.value) {
@@ -331,5 +331,12 @@ export default defineComponent({
 }
 .input-label .input {
   line-height: 33px;
+}
+input {
+  transition: outline 0.1s ease-in-out;
+  outline: 0 solid var(--color-blue-hover);
+}
+input:focus {
+  outline-width: 2px;
 }
 </style>

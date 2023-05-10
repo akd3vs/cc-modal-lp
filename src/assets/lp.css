@@ -10,9 +10,12 @@
 
 :root {
     --color-dark: #27313F;
+    --color-dark-muted: #B8BBC0;
     --color-blue: #1A62FF;
     --color-blue-hover: #0043D2;
     --color-orange: #FF9100;
+    --color-blue-muted: #8CB1FF;
+    --color-gray-light: #F2F4F6;
 }
 
 .lp {
@@ -2977,7 +2980,7 @@
     align-items: center;
     justify-content: center;
     padding: 4rem;
-    display: none
+    overflow: auto;
 }
 
 .lp .modal {
