@@ -356,10 +356,15 @@ export default defineComponent({
   padding: 0;
   z-index: -1;
   width: 18rem;
-  background: #fff;
-  box-shadow: 0 4px 10px rgba(41, 49, 62, 0.22);
   border-radius: 4px;
   transition: opacity 0.2s ease-in-out;
+}
+.dropdown:after {
+  content: '';
+  display: block;
+  height: 300px;
+  width: 100%;
+  background-color: transparent;
 }
 .dropdown.visible {
   display: block;
@@ -370,6 +375,8 @@ export default defineComponent({
 .dropdown .dropdown-search {
   padding: 1rem;
   border-bottom: 1px solid var(--color-gray-light);
+  background: #fff;
+  box-shadow: 0 4px 10px rgba(41, 49, 62, 0.22);
 }
 .dropdown .dropdown-search input {
   padding-left: 2rem;
@@ -420,6 +427,8 @@ export default defineComponent({
   position: relative;
   flex-direction: column;
   scroll-behavior: auto;
+  background: #fff;
+  box-shadow: 0 4px 10px rgba(41, 49, 62, 0.22);
 }
 .dropdown-options::-webkit-scrollbar {
   width: 5px;
