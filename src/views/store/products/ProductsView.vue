@@ -33,11 +33,11 @@ export default defineComponent({
 
 <template>
   <section class="ly-col">
-    <div class="ly-row ly-spacebetween-center">
+    <div class="ly-row ly-spacebetween-center px-half">
       <AtomButton @click="goToModal" type="button" class-name="btn btn-primary"
         >Add product</AtomButton
       >
-      <div class="ly-row">
+      <div class="ly-row demo-buttons">
         <AtomButton @click="goToDemoModal" type="button" class-name="btn btn-secondary"
           >Show inputs demo</AtomButton
         >
@@ -54,3 +54,15 @@ export default defineComponent({
     <RouterView />
   </section>
 </template>
+
+<style scoped>
+@media screen and (max-width: 580px) {
+  .demo-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+  .demo-buttons .btn:first-child {
+    margin: 0 0 0.5rem 0;
+  }
+}
+</style>
