@@ -336,6 +336,9 @@ input {
   transition: outline 0.1s ease-in-out;
   outline: 0 solid var(--color-blue-hover);
 }
+input:hover {
+  outline-width: 1px;
+}
 input:focus {
   outline-width: 2px;
 }

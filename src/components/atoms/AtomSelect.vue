@@ -55,6 +55,11 @@ export default defineComponent({
       type: Boolean,
       required: false,
       default: true
+    },
+    searchPlaceholder: {
+      type: String,
+      required: false,
+      default: 'Type to search...'
     }
   },
   setup(props, { emit }) {
@@ -259,7 +264,7 @@ export default defineComponent({
             :id="id || name"
             class="dropdown-input mb-half"
             type="text"
-            placeholder="Type to search..."
+            :placeholder="searchPlaceholder"
             v-model="searchTerm"
             @click.stop
             @keydown.prevent.down="focusNextOption"
@@ -359,13 +364,7 @@ export default defineComponent({
   border-radius: 4px;
   transition: opacity 0.2s ease-in-out;
 }
-.dropdown:after {
-  content: '';
-  display: block;
-  height: 300px;
-  width: 100%;
-  background-color: transparent;
-}
+
 .dropdown.visible {
   display: block;
   opacity: 1;
@@ -380,6 +379,11 @@ export default defineComponent({
 }
 .dropdown .dropdown-search input {
   padding-left: 2rem;
+  transition: all 0.1s ease-in-out;
+}
+.dropdown .dropdown-search input:focus::placeholder {
+  padding-left: 0.5rem;
+  transition: all 0.1s ease-in-out;
 }
 .dropdown .dropdown-search i {
   position: absolute;
@@ -399,7 +403,12 @@ export default defineComponent({
 
   transition: outline 0.1s ease-in-out;
 }
-.dropdown-container.open .dropdown-field {
+.dropdown-container .dropdown-field:hover,
+.dropdown .dropdown-search input:hover {
+  outline: 1px solid var(--color-blue-hover);
+}
+.dropdown-container.open .dropdown-field,
+.dropdown .dropdown-search input:focus {
   outline: 2px solid var(--color-blue-hover);
 }
 
@@ -504,6 +513,13 @@ export default defineComponent({
 @media screen and (max-width: 580px) {
   .dropdown-field p {
     max-width: 80vw;
+  }
+  .dropdown:after {
+    content: '';
+    display: block;
+    height: 300px;
+    width: 100%;
+    background-color: transparent;
   }
 }
 </style>

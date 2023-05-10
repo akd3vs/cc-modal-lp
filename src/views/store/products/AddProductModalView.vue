@@ -151,6 +151,7 @@ export default defineComponent({
           :options="productTypes"
           error-message="You must specify a product type"
           empty-label="Select one"
+          search-placeholder="Filter options..."
           required
           multiple
         />
