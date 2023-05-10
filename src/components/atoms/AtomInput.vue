@@ -217,7 +217,11 @@ export default defineComponent({
             maximumFractionDigits: parseInt((props.fractionDigits as string) || '0'),
             minimumFractionDigits: parseInt((props.fractionDigits as string) || '0')
           })
-          formattedValue = numberFormat.format(parseFloat(formattedValue))
+          let numberParsed = parseFloat(formattedValue)
+          if (Number.isNaN(numberParsed)) {
+            numberParsed = 0
+          }
+          formattedValue = numberFormat.format(numberParsed)
         }
 
         emit('update:modelValue', formattedValue)

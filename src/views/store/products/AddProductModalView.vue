@@ -96,7 +96,7 @@ export default defineComponent({
     size="md"
     @on-modal-close="onModalClose"
   >
-    <form class="ly-even-2" @submit.prevent="submit">
+    <form class="ly-even-2" @submit.prevent="submit" novalidate>
       <div>
         <AtomInput
           name="name"
@@ -125,6 +125,7 @@ export default defineComponent({
           min="1.05"
           fraction-digits="2"
           error-message="You must specify a valid price between {min} and {max}"
+          pattern="\d*"
           required
         />
       </div>
